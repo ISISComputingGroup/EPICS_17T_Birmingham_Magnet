@@ -9,19 +9,20 @@ class B17TmagStreamInterface(StreamInterface):
     commands = {
         # TODO: Commands and methods are currently not complete
         # Get commands
-        CmdBuilder("getField").escape("ouput").eos().build(),
-        # CmdBuilder("getHeater").escape("heater").eos().build(),
-        # CmdBuilder("getPersist").escape("persistent").eos().build(),
-        # CmdBuilder("getPersistMode").escape("persistmode").eos().build(),
-        # CmdBuilder("getReady").escape("ready").eos().build(),
-        # CmdBuilder("getSensA").escape("sensA").eos().build(),
-        # CmdBuilder("getSensB").escape("senBb").eos().build(),
-        # CmdBuilder("getSet1").escape("setpoint1").eos().build(),
-        # CmdBuilder("getSet2").escape("setpoint2").eos().build(),
-        # CmdBuilder("getNeedlePosition").escape("nv").eos().build(),
-        # CmdBuilder("getPressure").escape("pressure").eos().build(),
-        # CmdBuilder("getAttoAngle").escape("attoangle").eos().build(),
+        CmdBuilder("getField").escape("output").eos().build(),
+        CmdBuilder("getHeater").escape("heater").eos().build(),
+        CmdBuilder("getPersist").escape("persistent").eos().build(),
+        CmdBuilder("getPersistMode").escape("persistmode").eos().build(),
+        CmdBuilder("getReady").escape("ready").eos().build(),
+        CmdBuilder("getSensA").escape("sensA").eos().build(),
+        CmdBuilder("getSensB").escape("sensB").eos().build(),
+        CmdBuilder("getSet1").escape("setpoint1").eos().build(),
+        CmdBuilder("getSet2").escape("setpoint2").eos().build(),
+        CmdBuilder("getNeedlePosition").escape("nv").eos().build(),
+        CmdBuilder("getPressure").escape("pressure").eos().build(),
+        CmdBuilder("getAttoAngle").escape("attoangle").eos().build(),
         # CmdBuilder("getHeLevel").escape("helevel").eos().build(),
+        CmdBuilder("getMacroStatus").escape("getstatus").eos().build(),
     
         # Set commands
         # CmdBuilder("setField").escape("setfield").arg("[0-9]{1}").eos().build(),
@@ -45,6 +46,8 @@ class B17TmagStreamInterface(StreamInterface):
         #     CmdBuilder(self.catch_all).arg("^#9.*$").build()  # Catch-all command for debugging
         # }
 
+    # Get commands
+
     def getField(self):
         print("getField called")
         device_in = self._device.output
@@ -61,38 +64,62 @@ class B17TmagStreamInterface(StreamInterface):
         return f"persist:OK:{device_in}"
 
     def getPersistMode(self):
-        pass
+        print("getPersistMode called")
+        device_in = self._device.persistmode
+        return f"persistmode:OK:{device_in}"
 
     def getReady(self):
-        pass
+        print("getReady called")
+        device_in = self._device.ready
+        return f"ready:OK:{device_in}"
 
     def getSensA(self):
-        pass
+        print("getSensA called")
+        device_in = self._device.sensA
+        return f"sensA:OK:{device_in}"
 
     def getSensB(self):
-        pass
+        print("getSensB called")
+        device_in = self._device.sensB
+        return f"sensB:OK:{device_in}"
 
     def getSet1(self):
-        pass
+        print("getSet1 called")
+        device_in = self._device.setpoint1
+        return f"setpoint1:OK:{device_in}"
 
     def getSet2(self):
-        pass
+        print("getSet2 called")
+        device_in = self._device.setpoint2
+        return f"setpoint2:OK:{device_in}"
 
     def getPressure(self):
-        pass
+        print("getPressure called")
+        device_in = self._device.pressure
+        return f"pressure:OK:{device_in}"
 
     def getNeedlePosition(self):
-        pass
+        print("getNeedlePosition called")
+        device_in = self._device.nv_pos
+        return f"nv:OK:{device_in}"
 
     def getAttoAngle(self):
-        pass
+        print("getAttoAngle called")
+        device_in = self._device.attoangle
+        return f"attoangle:OK:{device_in}"
 
     def getHeLevel(self):
-        pass
+        ### convert to percentage of 243 (divide returned value by 243 then mul.tiply by 100)
+        print("getHeLevel called")
+        device_in = self._device.helevel
+        return f"helevel:OK:{device_in}"
 
+    # Set commands
 
     def setField(self):
-        pass
+        print("Setting Field"
+        self._device.set_field(command)
+        return f"OK:Field set to {command}"
 
     def setPersistMode(self):
         pass

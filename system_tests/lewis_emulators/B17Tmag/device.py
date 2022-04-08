@@ -18,6 +18,18 @@ class SimulatedB17Tmag(StateMachineDevice):
         self.output = "10T,20A"
         self.heater = 0
         self.persist = "10fT,20A"
+        self.persistmode = "OFF"
+        self.ready = "OFF"
+        self.sensA = 0.0
+        self.sensB = 0.0
+        self.setpoint1 = 0
+        self.setpoint2 = 0
+        self.nv_pos = 0
+        self.pressure = 0.0
+        self.attoangle = 0.00
+        self.helevel = 0.0
+        self.macrostatus = 0.0
+
         
 
     def _get_state_handlers(self):

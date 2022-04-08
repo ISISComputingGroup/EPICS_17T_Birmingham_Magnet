@@ -4,30 +4,54 @@ OutTerminator = "\n";
 ReplyTimeout = 2000;
 
 
-getField {
+# getField {
+#     out "output";
+#     in "OK:%(\$1:FIELD)fT,%f(\$1:CURR)A";
+# }
+
+getfield {
     out "output";
-    in "OK:%(\$1:FIELD)fT,%f(\$1:CURR)A";
+    in output:OK:\dT,\dA;
 }
+# getField {
+#     out "output";
+#     in "^[a-zA-Z][a-zA-Z0-9\.\-]{0,28}[a-zA-Z0-9]$";
+# }
 
 getHeater {
     out "heater";
-    in "heater:OK:%d";
+    in "heater:OK:[0-3]";
 }
 
 
+# getPersist {
+#     out "persistent";
+#     in "persistent:OK:%(\$1:FIELD:PERSIST)fT,%f(\$1:CURR:PERSIST)A";
+# }
+
 getPersist {
     out "persistent";
-    in "persistent:OK:%(\$1:FIELD:PERSIST)fT,%f(\$1:CURR:PERSIST)A";
+    in "persistent:OK:\dft,\dA";
 }
 
 getPersistMode {
     out "persistmode";
-    in "persistmode:OK:%s";
+    in "persistmode:OK:/^(ON|OFF)$/";
 }
 
 getReady {
     out "ready";
-    in "ready:OK:%s";
+    in "ready:OK:/^(ON|OFF)$/";
+}
+
+getSensA {
+    out "sensA";
+    in "sensA:OK:[0-9]*\.[0-9]+";
+}
+
+getSensB {
+    out "sensB";
+    in "sensB:OK:[0-9]*\.[0-9]+";
 }
 
 setField {
@@ -43,22 +67,22 @@ setPersistMode {
 
 getTempA {
     out "sensA";
-    in "sensA:OK:%f";
+    in "sensA:OK:\d";
 }
 
 getTempB {
     out "sensB";
-    in "sensB:OK:%f";
+    in "sensB:OK:\d";
 }
 
 getSet1 {
     out "setpoint1";
-    in "setpoint1:OK:%f";
+    in "setpoint1:OK:\d";
 }
 
 getSet2 {
     out "setpoint2";
-    in "setpoint2:OK:%f";
+    in "setpoint2:OK:\d";
 }
 
 setSet1 {
@@ -73,17 +97,23 @@ setSet2 {
 
 getNeedlePosition {
     out "nv";
-    in "nv:OK:%f";
+    in "nv:OK:\d";
 }
+
+# getPressure {
+#     out "pressure";
+#     in "pressure:OK:%(\$1:PRESSURE:SP:RBV)f,%(\$1:PRESSURE)f";
+# }
 
 getPressure {
     out "pressure";
-    in "pressure:OK:%(\$1:PRESSURE:SP:RBV)f,%(\$1:PRESSURE)f";
+    in "pressure:OK:\d,\d";
 }
+
 
 setPressure {
     out "setpressure %f";
-    in "setpressure:%s";
+    in "setpressure:[0-9]*\.[0-9]+";
 }
 
 setNeedlePosition {
@@ -93,7 +123,7 @@ setNeedlePosition {
 
 getAttoAngle {
     out "attoangle";
-    in "attoangle:OK:%f";
+    in "attoangle:OK:[0-2]?[0-9]{1,2}.[0-9]?{2}|3[0-5][0-9].[0-9]?{2}|360.00)";
 }
 
 getHelLevel {

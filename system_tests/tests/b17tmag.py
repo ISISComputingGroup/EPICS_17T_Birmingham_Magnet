@@ -42,4 +42,16 @@ class B17TmagTests(unittest.TestCase):
         self.ca.set_pv_value("FIELD", "10")
         self.ca.assert_that_pv_is("FIELD", 10)
 
+    # Test get heater
+    def test_WHEN_get_heater_called_THEN_expected_status_returned(self):
+        self.ca.assert_that_pv_is("HEATER", 0)
+
+    # test error occurs when sending value higher than 3
+    def test_WHEN_set_heater_to_4_THEN_error_occurs(self):
+        self._device.heater = 4
+        self.ca.assert_fails_to_set_pv("HEATER", 4)
+
+    # Test persist error called with correct readback value
+    def test_WHEN_get_persist_called_THEN_expected_status_returned(self):
+        self.ca.assert_that_pv_is("PERSIST", "10fT,20A")
 
