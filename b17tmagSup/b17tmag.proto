@@ -1,42 +1,35 @@
 InTerminator = "\r\n";
-OutTerminator = "\n";
+OutTerminator = "\r";
 
 ReplyTimeout = 2000;
 
 
-# getField {
-#     out "output";
-#     in "OK:%(\$1:FIELD)fT,%f(\$1:CURR)A";
-# }
 
-getfield {
+getField {
     out "output";
-    in output:OK:\dT,\dA;
+    in "output:OK:%(\$1FIELD)fT,%f(\$1CURR)A";
 }
-# getField {
-#     out "output";
-#     in "^[a-zA-Z][a-zA-Z0-9\.\-]{0,28}[a-zA-Z0-9]$";
-# }
+
 
 getHeater {
     out "heater";
     in "heater:OK:[0-3]";
 }
 
-
-# getPersist {
-#     out "persistent";
-#     in "persistent:OK:%(\$1:FIELD:PERSIST)fT,%f(\$1:CURR:PERSIST)A";
-# }
-
+# NEED TO FIX
 getPersist {
     out "persistent";
-    in "persistent:OK:\dft,\dA";
+    # in "%(\$1FIELD:PERSIST),%f(\$1CURR:PERSIST)";
+    in "persistent:OK:%(\$1FIELD:PERSIST)fT,%f(\$1CURR:PERSIST)A";
 }
 
+# getPersistMode {
+#     out "persistmode";
+#     in "persistmode:OK:/^(ON|OFF)$/";
+# }
 getPersistMode {
     out "persistmode";
-    in "persistmode:OK:/^(ON|OFF)$/";
+    in "persistmode:OK:%s";
 }
 
 getReady {
@@ -46,79 +39,80 @@ getReady {
 
 getSensA {
     out "sensA";
-    in "sensA:OK:[0-9]*\.[0-9]+";
+    in "sensA:OK:[0-9]*\.[0-9]";
 }
 
+# NEED TO FIX - FIXED? removed "+" from end of in line for A and B
 getSensB {
     out "sensB";
-    in "sensB:OK:[0-9]*\.[0-9]+";
+    in "sensB:OK:[0-9]*\.[0-9]";
 }
 
 setField {
     out "abort";
-    out "setfield %f";
-    in "setfield:%s";
+    out "setfield:\d";
+    in "setfield:\d";
 }
 
 setPersistMode {
-    out "setpersist%{ON|OFF}";
+    out "setpersist %{OFF|ON}";
     in "setpersist:%s";
 }
+# setPersistMode {
+#     out "setpersist %{OFF|ON}";
+#     in "setpersist: %{OFF|ON}";
+# }
 
-getTempA {
-    out "sensA";
-    in "sensA:OK:\d";
-}
+# getTempA {
+#     out "sensA";
+#     in "sensA:OK:\d";
+# }
 
-getTempB {
-    out "sensB";
-    in "sensB:OK:\d";
-}
+# getTempB {
+#     out "sensB";
+#     in "sensB:OK:\d";
+# }
 
 getSet1 {
     out "setpoint1";
-    in "setpoint1:OK:\d";
+    in "setpoint1:OK:\f";
 }
 
+# NEED TO FIX - fixed incorrect spelling in device file
 getSet2 {
     out "setpoint2";
-    in "setpoint2:OK:\d";
+    in "setpoint2:OK:\f";
 }
 
 setSet1 {
-    out "set1 %f";
-    in "set1:%s";
+    out "set1\d";
+    in "set1:\d";
 }
 
 setSet2 {
-    out "set2 %f";
-    in "set2:%s";
+    out "set2\d";
+    in "set2:\d";
 }
 
+# NEED TO FIX
 getNeedlePosition {
     out "nv";
     in "nv:OK:\d";
 }
 
-# getPressure {
-#     out "pressure";
-#     in "pressure:OK:%(\$1:PRESSURE:SP:RBV)f,%(\$1:PRESSURE)f";
-# }
-
 getPressure {
     out "pressure";
-    in "pressure:OK:\d,\d";
+    in "output:OK:%(\$1NV:PRESSURE:SP:RBV)f,%f(\$1NV:PRESSURE)f";
 }
 
-
 setPressure {
-    out "setpressure %f";
+    out "setpressure[0-9]*\.[0-9]+";
     in "setpressure:[0-9]*\.[0-9]+";
 }
 
 setNeedlePosition {
-    out "setposition%f";
-    in "setposition:%s";
+    out "setposition[0-9]*\.[0-9]+";
+    in "setposition:[0-9]*\.[0-9]+";
 }
 
 getAttoAngle {
@@ -128,16 +122,18 @@ getAttoAngle {
 
 getHelLevel {
     out "helevel";
-    in "helevel:OK:%d";
+    in "helevel:OK:\d";
 }
 
 setAttoAngle {
-    out "setangle%f";
-    in "setangle:%s";
+    out "setangle\f";
+    in "setangle:\s";
 }
 
+# NEED TO FIX - Fixed was not 
+# connected correctly and moved output to one line return as newline did not work
 getMacroStatus {
     out "getstatus";
-    in "getstatus:OK:%s";
+    in "getstatus:OK:\s";
 }
 
