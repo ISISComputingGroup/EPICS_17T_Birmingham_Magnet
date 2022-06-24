@@ -1,139 +1,129 @@
-InTerminator = "\r\n";
-OutTerminator = "\r";
+InTerminator = "\n";
+OutTerminator = "\n";
 
 ReplyTimeout = 2000;
 
-
-
 getField {
+    ExtraInput = Ignore;
     out "output";
-    in "output:OK:%(\$1FIELD)fT,%f(\$1CURR)A";
+    # in "%(\$1:FIELD)fT,%f(\$1:CURR)A";
+    # in "output:OK:%(\$1FIELD.VAL)fT,%f(\$1CURR.VAL)A";
+    # in "output:OK:%(\$1FIELD)fT,%(\$1CURR)fA";
+    in "%(\$1FIELD)fT,%(\$1CURR)fA";
 }
 
+setField {
+    out "abort"; # ADD BACK IN 
+    wait 1000;
+    out "setfield:%d";
+    in "setfield:%d";
+}
 
 getHeater {
     out "heater";
-    in "heater:OK:[0-3]";
+    in "heater:OK:%d";
 }
 
-# NEED TO FIX
+# # NEED TO FIX
 getPersist {
     out "persistent";
-    # in "%(\$1FIELD:PERSIST),%f(\$1CURR:PERSIST)";
-    in "persistent:OK:%(\$1FIELD:PERSIST)fT,%f(\$1CURR:PERSIST)A";
+    # in "OK:%(\$1FIELD:PERSIST)fT,%f(\$1CURR:PERSIST)A";
+    # in "persistent:OK:%(\$1FIELD:PERSIST)fT,%(\$1CURR:PERSIST)fA";
+    in "%(\$1FIELD:PERSIST)fT,%(\$1CURR:PERSIST)fA";
 }
 
-# getPersistMode {
-#     out "persistmode";
-#     in "persistmode:OK:/^(ON|OFF)$/";
-# }
 getPersistMode {
     out "persistmode";
-    in "persistmode:OK:%s";
+    # in "persistmode:OK:%s";
+    in "%s";
+}
+
+setPersistMode {
+    ExtraInput = Ignore;
+    out "setpersistmode%{OFF|ON}";
+    in "%{OFF|ON}";
 }
 
 getReady {
     out "ready";
-    in "ready:OK:/^(ON|OFF)$/";
+    in "ready:OK:%s";
 }
 
 getSensA {
     out "sensA";
-    in "sensA:OK:[0-9]*\.[0-9]";
+    in "sensA:OK:%f";
 }
 
-# NEED TO FIX - FIXED? removed "+" from end of in line for A and B
 getSensB {
     out "sensB";
-    in "sensB:OK:[0-9]*\.[0-9]";
+    in "sensB:OK:%f";
 }
-
-setField {
-    out "abort";
-    out "setfield:\d";
-    in "setfield:\d";
-}
-
-setPersistMode {
-    out "setpersist %{OFF|ON}";
-    in "setpersist:%s";
-}
-# setPersistMode {
-#     out "setpersist %{OFF|ON}";
-#     in "setpersist: %{OFF|ON}";
-# }
-
-# getTempA {
-#     out "sensA";
-#     in "sensA:OK:\d";
-# }
-
-# getTempB {
-#     out "sensB";
-#     in "sensB:OK:\d";
-# }
 
 getSet1 {
     out "setpoint1";
-    in "setpoint1:OK:\f";
+    in "setpoint1:OK:%f";
 }
 
-# NEED TO FIX - fixed incorrect spelling in device file
 getSet2 {
     out "setpoint2";
-    in "setpoint2:OK:\f";
+    in "setpoint2:OK:%f";
 }
 
 setSet1 {
-    out "set1\d";
-    in "set1:\d";
+    out "set1%f";
+    # in "set1:%s"; # OLD
+     in "set1:%f"; # NEW
 }
 
 setSet2 {
-    out "set2\d";
-    in "set2:\d";
+    out "set2%f";
+    # in "set2:%s"; # OLD
+    in "set2:%f"; # NEW
 }
 
-# NEED TO FIX
+
 getNeedlePosition {
     out "nv";
-    in "nv:OK:\d";
+    in "nv:OK:%f";
 }
 
 getPressure {
     out "pressure";
-    in "output:OK:%(\$1NV:PRESSURE:SP:RBV)f,%f(\$1NV:PRESSURE)f";
+    # in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f,%(\$1NV:PRESSURE)f";
+    in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f";
+    in "%(\$1NV:PRESSURE)f";
 }
 
 setPressure {
-    out "setpressure[0-9]*\.[0-9]+";
-    in "setpressure:[0-9]*\.[0-9]+";
+    out "setpressure %f";
+    # in "setpressure:%s"; # origional
+    in "setpressure:%f"; # NEW
 }
-
 setNeedlePosition {
-    out "setposition[0-9]*\.[0-9]+";
-    in "setposition:[0-9]*\.[0-9]+";
+    out "setposition %f";
+    in "setposition:%f";
+    # in "setposition:%s"; # OLD
 }
 
 getAttoAngle {
     out "attoangle";
-    in "attoangle:OK:[0-2]?[0-9]{1,2}.[0-9]?{2}|3[0-5][0-9].[0-9]?{2}|360.00)";
+    in "attoangle:OK:%f"
 }
 
 getHelLevel {
     out "helevel";
-    in "helevel:OK:\d";
+    in "%f";
 }
 
 setAttoAngle {
-    out "setangle\f";
-    in "setangle:\s";
+    out "setangle%f";
+    in "setangle:%f"; #used to be %s
 }
 
-# NEED TO FIX - Fixed was not 
-# connected correctly and moved output to one line return as newline did not work
 getMacroStatus {
     out "getstatus";
-    in "getstatus:OK:\s";
+    seperator=";";
+    # in "getstatus:OK:%s"; # OLD
+    in "%s";
 }
 

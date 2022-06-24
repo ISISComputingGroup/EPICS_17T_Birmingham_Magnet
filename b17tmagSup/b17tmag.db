@@ -24,7 +24,7 @@ record(ai, "$(P)FIELD"){
     field(INP, "@b17tmag.proto getField($(P)) $(PORT)")
     field(SCAN, "1 second")
     field(EGU, "T")
-    info(INTEREST, "HIGH")
+    # info(INTEREST, "HIGH")
 }
 
 record(ai, "$(P)CURR"){
@@ -33,7 +33,7 @@ record(ai, "$(P)CURR"){
     field(INP, "@b17tmag.proto getField($(P)) $(PORT)")
     # field(INP, "@b17tmag.proto getCurrent") - part of getField
     field(EGU, "A")
-    info(INTEREST, "HIGH")
+    # info(INTEREST, "HIGH")
 }
 
 record(mbbi, "$(P)HEATER"){
@@ -49,16 +49,18 @@ record(mbbi, "$(P)HEATER"){
     field(TWST, "OFF AT FIELD")
     field(THVL, "3")
     field(THST, "NO MATCH")
-    info(INTEREST, "HIGH")
+    # info(INTEREST, "HIGH")
 }
 
 record(ai, "$(P)FIELD:PERSIST"){
     field(DESC, "Persistent field of magnet at present")
-    field(DTYP, "stream")
+    field(DTYP, "Soft Channel") # To REMOVE
+    # field(DTYP, "stream") # TO KEEP
     field(SCAN, "1 second")
     field(EGU, "T")
-    field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)")
-    info(INTEREST, "HIGH")
+    # field(INP, "$(P)FIELD:SP CP MS") # TO REMOVE
+    field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)") # TO KEEP
+    # info(INTEREST, "HIGH")
 }
 
 record(ai, "$(P)CURR:PERSIST"){
@@ -67,22 +69,31 @@ record(ai, "$(P)CURR:PERSIST"){
     field(SCAN, "1 second")
     field(EGU, "A")
     field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)")
-    info(INTEREST, "HIGH")
+    # info(INTEREST, "HIGH")
 }
 
 record(bi, "$(P)MODE:PERSIST"){
     field(DESC, "Whether the magnets in persistent mode")
-    field(DTYP, "stream")
+    # field(DTYP, "Raw Soft Channel") # TO REMOVE
+    field(DTYP, "stream") # TO KEEP
     field(SCAN, "1 second")
-    field(INP, "@b17tmag.proto getPersistMode $(PORT)")
+    # field(INP, "$(P)MODE:PERSIST:SP.VAL") # TO REMOVE
+    field(INP, "@b17tmag.proto getPersistMode $(PORT)") # TO KEEP
     field(ZNAM, "ON")
     field(ONAM, "OFF")
     info(INTEREST, "HIGH")
 }
+# record(mbbi,  "$(P)MODE:PERSIST"){
+#     field(DESC, "Whether the magnets in persistent mode")
+#     field(DTYP, "stream")
+#     field(INP, "@b17tmag.proto getPersistMode $(PORT)")
+#     field(ZRST, "ON")
+#     field(ONST, "OFF")
+# }
 
 record(bi, "$(P)READY"){
     field(DESC, "Whether the magnets stable and at field")
-    field(DTYP, "stream")
+    field(DTYP, "stream") # TO KEEP
     field(SCAN, "1 second")
     field(INP, "@b17tmag.proto getReady $(PORT)")
     field(ZNAM, "ON")
@@ -90,23 +101,25 @@ record(bi, "$(P)READY"){
     info(INTEREST, "HIGH")
 }
 
-# Low priority - need to run abort first (should be achievable in the protocol file)
+#  Need to run abort first (should be achievable in the protocol file)
 record(ao, "$(P)FIELD:SP"){
     field(DESC, "The field to set")
     field(DTYP, "stream")
     field(EGU, "T")
     field(OUT, "@b17tmag.proto setField $(PORT)")
+    # field(FLNK, "$(P)FIELD:PERSIST") # TO REMOVE
     info(INTEREST, "LOW")
 }
 
 record(bo, "$(P)MODE:PERSIST:SP"){
     field(DESC, "The persistent field to set")
     field(DTYP, "stream")
-    field(OUT, "@b17tmag.proto setPersistMode $(PORT)")
+    field(OUT, "@b17tmag.proto setPersistMode($(P)) $(PORT)") # to keep
     field(ZNAM, "ON")
     field(ONAM, "OFF")
-    field(FLNK, "$(P)MODE:PERSIST PP MS")
-    info(INTEREST, "LOW")
+    field(VAL, "OFF")
+    # field(FLNK, "$(P)MODE:PERSIST")
+    # info(INTEREST, "LOW")
 }
 
 record(ai, "$(P)TEMP:A"){
@@ -129,19 +142,23 @@ record(ai, "$(P)TEMP:B"){
 
 record(ai, "$(P)TEMP:SET1"){
     field(DESC, "The temperature for setpoint 1")
-    field(DTYP, "stream")
+    field(DTYP, "Soft Channel") # TO REMOVE
+    # field(DTYP, "stream") # TO KEEP
     field(SCAN, "1 second")
     field(EGU, "K")
-    field(INP, "@b17tmag.proto getSet1 $(PORT)")
+    # field(INP, "@b17tmag.proto getSet1 $(PORT)") # TO KEEP
+    field(INP, "$(P)TEMP:SET1:SP") # TO REMOVE
     info(INTEREST, "HIGH")
 }
 
 record(ai, "$(P)TEMP:SET2"){
     field(DESC, "The temperature for setpoint 2")
-    field(DTYP, "stream")
+    field(DTYP, "Soft Channel") # TO REMOVE
+    # field(DTYP, "stream") # TO KEEP
     field(SCAN, "1 second")
     field(EGU, "K")
-    field(INP, "@b17tmag.proto getSet2 $(PORT)")
+    # field(INP, "@b17tmag.proto getSet2 $(PORT)") # TO KEEP
+    field(INP, "$(P)TEMP:SET2:SP") # TO REMOVE
     info(INTEREST, "HIGH")
 }
 
@@ -150,6 +167,8 @@ record(ao, "$(P)TEMP:SET1:SP"){
     field(DTYP, "stream")
     field(EGU, "K")
     field(OUT, "@b17tmag.proto setSet1 $(PORT)")
+    field(VAL, "0")
+    field(FLNK, "$(P)TEMP:SET1") # TO REMOVE
     info(INTEREST, "HIGH")
 }
 
@@ -158,10 +177,12 @@ record(ao, "$(P)TEMP:SET2:SP"){
     field(DTYP, "stream")
     field(EGU, "K")
     field(OUT, "@b17tmag.proto setSet2 $(PORT)")
+    field(FLNK, "$(P)TEMP:SET2") # TO REMOVE
+    field(VAL, "0")
     info(INTEREST, "HIGH")
 }
 
-# Alias's
+# # Alias's
 alias("$(P)TEMP:SET1", "$(P)TEMP:HEATEX")
 alias("$(P)TEMP:SET1:SP", "$(P)TEMP:HEATEX:SP")
 alias("$(P)TEMP:SET2", "$(P)TEMP:PROBE")
@@ -180,61 +201,73 @@ record(ai, "$(P)NV:POS"){
 
 record(ai, "$(P)NV:POS:RBV"){
     field(DESC, "The current pressue target")
-    field(DTYP, "stream")
+    field(DTYP, "Soft Channel") # TO REMOVE
+    # field(DTYP, "stream") # TO KEEP
     field(SCAN, "1 second")
     field(EGU, "mm")
-    field(INP, "@b17tmag.proto getPressure($(P)) $(PORT)")
-
+    field(INP, "$(P)NV:POS:SP") # TO REMOVE
+    # field(INP, "@b17tmag.proto getPressure($(P)) $(PORT)") # TO KEEP
     # field(INP, "@b17tmag.proto getPressure") Part of getPressure need to send in the prefix a well
     info(INTEREST, "HIGH")
 }
 
 record(ai, "$(P)NV:PRESSURE"){
     field(DESC, "The current pressure")
-    field(DTYP, "stream")
+    # field(DTYP, "Soft Channel") # To REMOVE
+    field(DTYP, "stream") # TO KEEP
     field(EGU, "mbar")
-    field(INP, "@b17tmag.proto getPressure($(P)) $(PORT)")
+    # field(INP, "NV:PRESSURE:SP CP MS") # To REMOVE
+    field(INP, "@b17tmag.proto getPressure($(P)) $(PORT)") #TO KEEP
     # field(INP, "@b17tmag.proto getPressure") Part of getPressure need to send in the prefix a well
     info(INTEREST, "HIGH")
+}
+
+# # Not in manual but exists currently to satisfy manual proto file method
+record(ai, "$(P)NV:PRESSURE:SP:RBV"){
+    field(DESC, "The current pressue target")
+    # field(DTYP, "Soft Channel") # To REMOVE
+    field(DTYP, "stream") # TO KEEP
+    field(SCAN, "1 second")
+    field(EGU, "mbar")
+    # field(INP, "$(P)NV:PRESSURE:SP CA MS") # TO REMOVE
+    field(INP, "@b17tmag.proto getPressure($(P)) $(PORT)") # TO KEEP
+    # info(INTEREST, "HIGH")
 }
 
 record(ao, "$(P)NV:PRESSURE:SP"){
     field(DESC, "The pressue target")
     field(DTYP, "stream")
     field(EGU, "mbar")
-    field(OUT, "@b17tmag.proto setPressure $(PORT)")
-}
-
-# Not in manual but exists currently to satisfy manual proto file method
-record(ai, "$(P)NV:PRESSURE:SP:RBV"){
-    field(DESC, "The current pressue target")
-    field(DTYP, "stream")
-    field(SCAN, "1 second")
-    field(EGU, "mbar")
-    field(INP, "@b17tmag.proto getPressure($(P)) $(PORT)")
-    info(INTEREST, "HIGH")
+    field(OUT, "@b17tmag.proto setPressure($(P)) $(PORT)")
+    field(FLNK, "$(P)NV:PRESSURE:SP:RBV") # TO REMOVE
 }
 
 record(ao, "$(P)NV:POS:SP"){
     field(DESC, "The target position for the needle valve")
     field(DTYP, "stream")
     field(EGU, "mm")
-    field(OUT, "@b17tmag.proto setNeedlePosition $(PORT)")
+    field(OUT, "@b17tmag.proto setNeedlePosition ($(P)) $(PORT)")
+    field(VAL, "0")
+    # field(FLNK, "$(P)NV:POS:SP") # TO REMOVE
 }
 
-record(ao, "$(P)ATTO:POS"){
+record(ai, "$(P)ATTO:POS"){
     field(DESC, "Angle of the attocube")
-    field(DTYP, "stream")
+    # field(DTYP, "Soft Channel") # TO REMOVE
+    field(DTYP, "stream") # TO KEEP
     field(SCAN, "1 second")
     field(EGU, "deg")
-    field(OUT, "@b17tmag.proto getAttoAngle $(PORT)")
-    info(INTEREST, "HIGH")
+    field(INP, "@b17tmag.proto getAttoAngle $(PORT)") # TO KEEP
+    # field(FLNK, "$(P)ATTO:POS:SP CP")
+    # field(INP, "$(P)ATTO:POS:SP") # TO REMOVE
+    # field(FLNK,  "$(P)ATTO:POS:SP")
+    # info(INTEREST, "HIGH")
 }
 
-# Needs to be converted to a percentge of 243 
-# (divide the returned value by 243 then multiply by 100) 
-# - maybe possible at the proto file level
-# HE LEVEL Raw Input Value
+# # Needs to be converted to a percentge of 243 
+# # (divide the returned value by 243 then multiply by 100) 
+# # - maybe possible at the proto file level
+# # HE LEVEL Raw Input Value
 record(ai, "$(P)HE:LEVEL_RAW"){
     field(DESC, "The current level of helium")
     field(DTYP, "stream")
@@ -245,7 +278,7 @@ record(ai, "$(P)HE:LEVEL_RAW"){
     field(FLNK, "$(P)HE:LEVEL:CALC PP")
 }
 
-# HE LEVEL Calc Value as Pecentage of 245
+# # HE LEVEL Calc Value as Pecentage of 245
 record(calcout, "$(P)HE:LEVEL:CALC"){
     field(DESC, "Percentage value of HE:LEVEL")
     field(INPA, "$(P)HE:LEVEL_RAW")
@@ -253,10 +286,10 @@ record(calcout, "$(P)HE:LEVEL:CALC"){
     field(OUT, "$(P)HE:LEVEL PP")
 }
 
-# HE LEVEL as percetnage of 245
+# # HE LEVEL as percetnage of 245
 record(ai, "$(P)HE:LEVEL"){
     field(DESC, "The current level of helium")
-    field(DTYP, "stream")
+    # field(DTYP, "stream")
     field(PREC, "2")
     field(EGU, "%")
     info(INTEREST, "HIGH")
@@ -267,16 +300,22 @@ record(ao, "$(P)ATTO:POS:SP"){
     field(DTYP, "stream")
     field(EGU, "deg")
     field(OUT, "@b17tmag.proto setAttoAngle $(PORT)")
+    # field(FLNK, "$(P)ATTO:POS") # TO REMOVE
+    field(VAL, "0")
     info(INTEREST, "LOW")
 }
 
 record(waveform, "$(P)MACRO:STAT") {
     field(DESC, "The current status of the system")
-    field(NELM, "1024")
+    field(NELM, "89")
     field(FTVL, "STRING")
-    field(SDIS, "$(P)MACRO:STAT:READ")
+    field(LOPR, "0")
+    field(HOPR, "1024")
+    field(SDIS, "$(P)MACRO:STAT:READ.RVAL")
+    field(DISV, "1")
     field(SCAN, "1 second")
-    # field(BUSY, "$(P)MACRO:STAT:READ")
+    field(DTYP, "stream")
+    # field(BUSY, "$(P)MACRO:STAT:READ.RVAL")
     field(INP, "@b17tmag.proto getMacroStatus $(PORT)") # Only read when MACRO:STAT:READ is True
     info(INTEREST, "MEDIUM")
 }
@@ -288,22 +327,25 @@ record(bo, "$(P)MACRO:STAT:READ"){
     field(VAL, "0")
     field(ZNAM, "True")
     field(ONAM, "False")
-    # field(FLNK, "$(P)MACRO:STAT")
+    # field(FLNK,  "$(P)MACRO:STAT")
     info(INTEREST, "MEDIUM")
 }
 
-# record(calc, "$(P)MACRO:STAT:PP") {
+
+
+# Check if Macro STAT Read is true and process Macro stat, else, keep checking until Macro STAT Read is true 
+# record(calcout, "$(P)MACRO:STAT:PP") {
 #     field(DESC, "Process MACRO:STAT if READ True")
 #     field(SCAN, "1 second")
-#     field(INPA, "$(P)MACRO:STAT:READ")
-#     field(CALC, "A = 0 ? $(P)MACRO:STAT : $(P)MACRO:STAT:PP")
+#     field(INPA, "$(P)MACRO:STAT:READ.VAL")
+#     field(CALC, "A=?$(P)MACRO:STAT:1")
 # }
 
 
 
-# CALC record to disable MACRO:STAT is MACRO:STAT:READ is False else enable
+# # CALC record to disable MACRO:STAT is MACRO:STAT:READ is False else enable
 
-#  Maybe an intemediary record that can be disabled by MACRO:STAT 
-# or control BUSY field in MACRO:STAT waveform record
+# #  Maybe an intemediary record that can be disabled by MACRO:STAT 
+# # or control BUSY field in MACRO:STAT waveform record
 
 

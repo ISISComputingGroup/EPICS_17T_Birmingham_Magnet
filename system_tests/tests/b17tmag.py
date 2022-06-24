@@ -31,38 +31,9 @@ class B17TmagTests(unittest.TestCase):
     Tests for the B17Tmag IOC.
     """
     def setUp(self):
-        # self.pressure_value = 1000
-        # self.set_loop_status = 1
-        # self.default_initial_value = 0
-        # self.default_id_prefix = 1111
-        # self.low_pressure = 50
-        # self.lewis, self.ioc = get_running_lewis_and_ioc(DEVICE_A_PREFIX, DEVICE_A_PREFIX)
-        # self.ca = ChannelAccess(default_timeout=20, default_wait_time=0.0, device_prefix=DEVICE_A_PREFIX)
-        # self.lewis.backdoor_run_function_on_device("re_initialise")
         self.lewis, self.ioc = get_running_lewis_and_ioc("b17Tmag", DEVICE_PREFIX)
         self.ca = ChannelAccess(default_timeout=20, default_wait_time=0.0, device_prefix=DEVICE_PREFIX)
         self.lewis.backdoor_run_function_on_device("re_initialise")
-
-    # def test_that_fails(self):
-    #     pass
-        # self.fail("You haven't implemented any tests!")
-
-    # def test_WHEN_FIELD_called_THEN_expected_status_returned(self):
-    #     self.ca.set_pv_value("FIELD", "10")
-    #     self.ca.assert_that_pv_is("FIELD", 10)
-
-    # # Test get heater
-    # def test_WHEN_get_heater_called_THEN_expected_status_returned(self):
-    #     self.ca.assert_that_pv_is("HEATER", 0)
-
-    # # test error occurs when sending value higher than 3
-    # def test_WHEN_set_heater_to_4_THEN_error_occurs(self):
-    #     self._device.heater = 4
-    #     self.ca.assert_fails_to_set_pv("HEATER", 4)
-
-    # # Test persist error called with correct readback value
-    # def test_WHEN_get_persist_called_THEN_expected_status_returned(self):
-    #     self.ca.assert_that_pv_is("PERSIST", "10fT,20A")
 
     # @parameterized.expand([
     #     ("EM_PRESSURE", "EM_PRESSURE",  0, "Stop", 1),
@@ -93,8 +64,12 @@ class B17TmagTests(unittest.TestCase):
     ("Negative_Small_Int", -10, -4.081632653061225),
     ])
     def test_WHEN_helevel_raw_set_THEN_helevel_readback_percentage(self, _, input, expected):
-        self.ca.set_pv_value("HE:LEVEL_RAW", input)
-        self.ca.assert_that_pv_is("HE:LEVEL.VAL", expected)
+    #     # self.helevel = input
+    #     self.ca.set_pv_value("HE:LEVEL_RAW", input)
+    #     self.ca.assert_that_pv_is("HE:LEVEL", expected)
+        self.lewis.backdoor_set_on_device("helevel", input)
+        self.ca.assert_that_pv_is("HE:LEVEL", expected)
+
 
 
     @parameterized.expand([
@@ -105,4 +80,11 @@ class B17TmagTests(unittest.TestCase):
         self.ca.set_pv_value("MACRO:STAT:READ", value)
         self.ca.assert_that_pv_is("MACRO:STAT.DISA", value)
 
-    
+    # Test setting of Mode:PERSIST:SP and reading of MODE:PERSIST
+    # def test_WHEN_mode_persist_set_THEN_mode_persist_readback_correctly(self):
+    #     self.ca.set_pv_value("MODE:PERSIST:SP", "ON")
+    #     self.ca.assert_that_pv_is("MODE:PERSIST", "ON")
+
+    def test_WHEN_macro_set_THEN_macro_readback_correctly(self):
+        self.ca.set_pv_value("HE:LEVEL_RAW", 50)
+        self.ca.assert_that_pv_is("MACRO:STAT", "output1.000000fT,10.000000A;voltage1.253;heater0;ramprate1.234;units0;target1.000000fT,10.000000A;persistent0.0T,0.0A;psustatusUnabletocommunicatewithPSU.Pleasecheckinterfaceandmainscables.Initialisationfailed.;pausestatusOFF;tblstatus1.000000fT,10.000000A;readyON;sensA0.0;sensB0.0;setpoint10.0;setpoint20.0;L1pid50.0,20.0,0.0;L2pid45.0,23.0,0.0;L1power0.0;L1range1;L2power0.0;L2range2;L1mout23.0;L2mout33.0;L1ctrl1,1;L2ctrl2,1;zoneON;tcstatusSensorA:Temperaturestable...SensorB:Temperaturestable...;nv0.608696;pressure17.623276,13.796360;valvestatusIdle;helevel0;nlevel121.0;hefrequency1;persistmodeOFF;attoangle117.9992;")
