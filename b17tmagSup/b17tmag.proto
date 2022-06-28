@@ -40,8 +40,8 @@ getPersistMode {
 
 setPersistMode {
     ExtraInput = Ignore;
-    out "setpersistmode%{OFF|ON}";
-    in "%{OFF|ON}";
+    out "setpersistmode%{ON|OFF}";
+    in "%{ON|OFF}";
 }
 
 getReady {
@@ -89,9 +89,10 @@ getNeedlePosition {
 
 getPressure {
     out "pressure";
-    # in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f,%(\$1NV:PRESSURE)f";
-    in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f";
-    in "%(\$1NV:PRESSURE)f";
+    # in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f,%(\$1NV:PRESSURE)f"; # OLD
+    in "pressure:OK:%f,%f";
+    # in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f";
+    # in "%(\$1NV:PRESSURE)f";
 }
 
 setPressure {
