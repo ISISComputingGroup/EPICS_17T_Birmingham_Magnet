@@ -61,7 +61,8 @@ record(ai, "$(P)FIELD:PERSIST"){
     field(PREC, "2")
     field(EGU, "T")
     # field(INP, "$(P)FIELD:SP CP MS") # TO REMOVE
-    field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)") # TO KEEP
+    field(INP, "$(P)SEND_PERSIST_DIFF") # TEST
+    # field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)") # OLD
     # info(INTEREST, "HIGH")
 }
 
@@ -71,8 +72,30 @@ record(ai, "$(P)CURR:PERSIST"){
     field(SCAN, "1 second")
     field(PREC, "2")
     field(EGU, "A")
-    field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)")
+    field(INP, "$(P)SEND_PERSIST_DIFF") # TEST
+    # field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)") # OLD
     # info(INTEREST, "HIGH")
+}
+
+
+# Waveform and fanout records for FIELD and CURR PERSIST PV's
+# The waveform reads in getPersistMode values
+record(waveform, "$(P)PERIST_READBACK_ARRAY"){
+    field(DESC, "Persistent readback array values")
+    field(DTYP, "stream")
+    field(SCAN, "1 second")
+    field(INP,  "@b17tmag.proto getPersist($(P)) $(PORT)")
+    field(NELM, "2")
+    field(FTVL, "DOUBLE")
+    field(FLNK, "$(P)SEND_PERSIST_DIFF")
+}
+
+# fanout record to pass on respective persist values to PV's
+record(fanout, "$(P)SEND_PERSIST_DIFF"){
+    field(DESC, "Send to respective PVs")
+    field(SCAN, "Passive")
+    field(LNK1, "$(P)FIELD:PERSIST")
+    field(LNK2, "$(P)CURR:PERSIST")
 }
 
 record(bi, "$(P)MODE:PERSIST"){
