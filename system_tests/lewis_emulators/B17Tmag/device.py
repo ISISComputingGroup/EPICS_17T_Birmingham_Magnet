@@ -19,10 +19,10 @@ class SimulatedB17Tmag(StateMachineDevice):
         self.out_terminator_in_error = ""
         # t = threading.Thread(target=self.poller)
         # t.start()
-        if not "self.helevel" in locals():
-            self.helevel = 0
-        else: 
-            self.helevel = self.helevel
+        # if not "self.helevel" in locals():
+        #     self.helevel = 0
+        # else: 
+        #     self.helevel = self.helevel
         self.macrostatus = self.device_status()
 
         # self.output = "1.000000T,10.000000A"
@@ -45,8 +45,8 @@ class SimulatedB17Tmag(StateMachineDevice):
         Returns the status of the device.
         This inludes all device state parameters
         """
-        if "self.helevel" in locals():
-            self.helevel = self.helevel
+        # if "self.helevel" in locals():
+        #     self.helevel = self.helevel
         # if not "self.helevel" in locals():
         #     self.helevel = 0
         # else:
@@ -148,8 +148,8 @@ class SimulatedB17Tmag(StateMachineDevice):
         self.pressure = 17.623276 # Needle Valve Pressure Target, Actual Pressure
         self.needle_valve_pressure = 13.796360 # part of getpressure
         self.valvestatus  = "Idle" # Needle valve status
-        # self.helevel = 453.00 # current helium level in mm
+        self.helevel = 453.00 # current helium level in mm
         self.nlevel = 121.00 # current nitrogen level in mm
-        self.hefrequency = 1 # He level gauge reading frequency 1
+        self.hefrequency = 1.00 # He level gauge reading frequency 1
         self.persistmode = "OFF" # Check the persistence mode, if ON, heater is switched off at field
         self.attoangle = 10.00 #117.999200 # attocube positioner angle (degrees)

@@ -234,7 +234,7 @@ class B17TmagStreamInterface(StreamInterface):
         Set the position of the needle valve on the device in mm
         """
         print(f"Setting needle position from {self._device.nv} to: {command}")
-        self._device.nv_pos = command
+        self._device.nv = command
         return f"setposition:{command}"
 
     def setAttoAngle(self, command):

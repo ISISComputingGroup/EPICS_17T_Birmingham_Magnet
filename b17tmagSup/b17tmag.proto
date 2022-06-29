@@ -111,7 +111,7 @@ getAttoAngle {
     in "attoangle:OK:%f"
 }
 
-getHelLevel {
+getHeLevel {
     out "helevel";
     in "%f";
 }
