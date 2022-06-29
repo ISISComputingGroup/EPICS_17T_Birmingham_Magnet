@@ -89,8 +89,8 @@ getNeedlePosition {
 
 getPressure {
     out "pressure";
-    # in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f,%(\$1NV:PRESSURE)f"; # OLD
-    in "pressure:OK:%f,%f";
+    in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f,%(\$1NV:PRESSURE)f"; # OLD
+    # in "pressure:OK:%f,%f";
     # in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f";
     # in "%(\$1NV:PRESSURE)f";
 }
