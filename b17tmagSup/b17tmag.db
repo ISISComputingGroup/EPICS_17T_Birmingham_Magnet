@@ -264,11 +264,9 @@ record(ai, "$(P)NV:PRESSURE:SP:RBV"){
 
 #Alternative method of retreiving both NV:PRESSURE:SP:RBV and NV:PRESSURE
 # Retrieve value and place in array. Then fanout INVIDISUAL RECORDS TO REPESCTIVE PV's
-
 record(waveform, "$(P)PRESSURE_DIFF_ARRAY"){
     field(DESC, "Store expected and actual pressure")
     field(DTYP, "stream")
-    # field(INP,  "@b17tmag.proto getPressure($(P)) $(PORT)")
     field(INP,  "@b17tmag.proto getPressure($(P)) $(PORT)")
     field(NELM, "2")
     field(SCAN, "1 second")
@@ -278,7 +276,8 @@ record(waveform, "$(P)PRESSURE_DIFF_ARRAY"){
 
 record(fanout, "$(P)SEND_PRESSURE_DIFF"){
     field(DESC, "Send respective pressure values to PV's")
-    field(SCAN, "Passive")
+    # field(SCAN, "Passive") #OLD
+    field(SCAN, "1 second")
     field(LNK1, "$(P)NV:PRESSURE:SP:RBV")
     field(LNK2, "$(P)NV:PRESSURE")
 }
