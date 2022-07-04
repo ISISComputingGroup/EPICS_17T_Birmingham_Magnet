@@ -7,56 +7,45 @@ from lewis.utils.replies import conditional_reply
 @has_log
 class B17TmagStreamInterface(StreamInterface):
     commands = {
-        # TODO: Commands and methods are currently not complete
         # Get commands
-        # had to remove .eos().build() to fix emulator
-        CmdBuilder("getField").escape("output").build(),
-        CmdBuilder("getHeater").escape("heater").build(),
-        CmdBuilder("getPersist").escape("persistent").build(),
-        CmdBuilder("getPersistMode").escape("persistmode").build(),
-        CmdBuilder("getReady").escape("ready").build(),
-        CmdBuilder("getSensA").escape("sensA").build(),
-        CmdBuilder("getSensB").escape("sensB").build(),
-        CmdBuilder("getSet1").escape("setpoint1").build(),
-        CmdBuilder("getSet2").escape("setpoint2").build(),
-        CmdBuilder("getNeedlePosition").escape("nv").build(),
-        CmdBuilder("getPressure").escape("pressure").build(),
-        CmdBuilder("getAttoAngle").escape("attoangle").build(),
-        CmdBuilder("getHeLevel").escape("helevel").build(),
-        CmdBuilder("getMacroStatus").escape("getstatus").build(),
-    
-        # # Set commands?:apple|banana
-         CmdBuilder("abort").escape("abort").eos().build(),
-        CmdBuilder("setField").escape("setfield:").arg("[0-9]{1,3}").eos().build(),
-        # CmdBuilder("setPersistMode").escape("setpersistmode").arg("^.{3}$|^.{3}$").eos().build(),
-        CmdBuilder("setPersistMode").escape("setpersistmode").arg("ON|OFF").eos().build(),
-        # CmdBuilder("setSet1").escape("set1").arg("[0-9]{1,2}.[0-9].[0-9]+").eos().build(),
-        CmdBuilder("setSet1").escape("set1").float().eos().build(),
-        # CmdBuilder("setSet2").escape("set2").arg("[0-9]{1,2}.[0-9].[0-9]+").eos().build(),
-        CmdBuilder("setSet2").escape("set2").float().eos().build(),
-        # CmdBuilder("setPressure").escape("setpressure ").arg("[0-9]{0,2}.[0-9]+").eos().build(),
+        CmdBuilder("getField").escape("output").eos().build(),
+        CmdBuilder("getHeater").escape("heater").eos().build(),
+        CmdBuilder("getPersist").escape("persistent").eos().build(),
+        CmdBuilder("getPersistMode").escape("persistmode").eos().build(),
+        CmdBuilder("getReady").escape("ready").eos().build(),
+        CmdBuilder("getSensA").escape("sensA").eos().build(),
+        CmdBuilder("getSensB").escape("sensB").eos().build(),
+        CmdBuilder("getSet1").escape("setpoint1").eos().build(),
+        CmdBuilder("getSet2").escape("setpoint2").eos().build(),
+        CmdBuilder("getNeedlePosition").escape("nv").eos().build(),
+        CmdBuilder("getPressure").escape("pressure").eos().build(),
+        CmdBuilder("getAttoAngle").escape("attoangle").eos().build(),
+        CmdBuilder("getHeLevel").escape("helevel").eos().build(),
+        CmdBuilder("getMacroStatus").escape("getstatus").eos().build(),
+
+        # Set commands
+        CmdBuilder("abort").escape("abort").eos().build(),
+        CmdBuilder("setField").escape("setfield ").float().eos().build(),
+        CmdBuilder("setPersistMode").escape("setpersist ").arg("ON|OFF").eos().build(),
+        CmdBuilder("setSet1").escape("set1 ").float().eos().build(),
+        CmdBuilder("setSet2").escape("set2 ").float().eos().build(),
         CmdBuilder("setPressure").escape("setpressure ").float().eos().build(),
-        # CmdBuilder("setNeedlePosition").escape("setposition ").arg("[0-9]{1,2}.[0-9]+").eos().build(),
         CmdBuilder("setNeedlePosition").escape("setposition ").float().eos().build(),
-        CmdBuilder("setAttoAngle").escape("setangle").arg("[0-2]?[0-9]{1,2}.[0-9]+|3[0-5][0-9].[0-9]+|360.[0-9]+").eos().build(),
-        # CmdBuilder("setAttoAngle").escape("setangle").arg("[+-]?[0-9]+\.[0-9]+").eos().build(),
+        CmdBuilder("setAttoAngle").escape("setangle").float().eos().build(),
     }
     
     in_terminator = "\n"
     out_terminator = "\n"
 
-    def __init__(self):
-        super().__init__()
-
     # Get commands
+    @conditional_reply("connected")
     def getField(self):
         """
         Gets the current FIELD value from the device. The FIELD type returned is Tesla.
         """
-        print("getField called")
-        device_in = f"{self._device.field_T}T,{self._device.curr_A}A"
-        return f"{device_in}" 
+        return f"output:OK:{self._device.field_T}T,{self._device.curr_A}A"
 
+    @conditional_reply("connected")
     def getHeater(self):
         """
         Gets the heater value from the device. 
@@ -66,182 +55,203 @@ class B17TmagStreamInterface(StreamInterface):
         - 2:OFF AT FIELD
         - 3:NO MATCH
         """
-        print("getHeater called")
-        device_in = self._device.heater
-        return f"heater:OK:{device_in}"
+        return f"heater:OK:{self._device.heater}"
 
+    @conditional_reply("connected")
     def getPersist(self):
         """
         Gets the current field and current of the magnet at present from the device. 
         The field is returned in Telsa and the current is returned in Amps.
         """
-        print("getPersist called")
-        device_in = self._device.persistent
-        # return f"persistent:OK:{device_in}"
-        return f"{device_in}"
+        if self._device.persistmode:
+            return f"persistent:OK:{self._device.field_T}T,{self._device.curr_A}A"
+        else:
+            return "persistent:OK:0.00T,0.00A"
 
+    @conditional_reply("connected")
     def getPersistMode(self):
         """
         Retreive whetehr or not the magnet is in persistent mode or not.
         The mode can either be 'ON' or 'OFF'
         """
-        print("getPersistMode called")
-        device_in = self._device.persistmode
-        return device_in
+        return f"persistmode:OK:{'ON' if self._device.persistmode else 'OFF'}"
 
+    @conditional_reply("connected")
     def getReady(self):
         """
         Retrieve whether or not the magent is stable and at field.
         The two possible modes that be returned from the device are 'ON' or 'OFF'
         """
-        print("getReady called")
-        device_in = self._device.ready
-        return f"ready:OK:{device_in}"
+        return f'ready:OK:{"ON" if self._device.ready else "OFF"}'
 
+    @conditional_reply("connected")
     def getSensA(self):
         """
         Get the temperature at sensor A in Kelvin from the device
         """
-        print("getSensA called")
-        device_in = self._device.sensA
-        return f"sensA:OK:{device_in}"
+        return f"sensA:OK:{self._device.sensA}"
 
+    @conditional_reply("connected")
     def abort(self):
         """
         abort
         """
-        print("Abort ran")
         return f"abort:OK:"
-        
 
+    @conditional_reply("connected")
     def getSensB(self):
         """
         Get the temperature at sensor B in Kelvin from the device
         """
-        print("getSensB called")
-        device_in = self._device.sensB
-        return f"sensB:OK:{device_in}"
+        return f"sensB:OK:{self._device.sensB}"
 
+    @conditional_reply("connected")
     def getSet1(self):
         """
         Get the temperature for setpoint 1 in Kelvin from the device
         """
-        print("getSet1 called")
-        device_in = self._device.setpoint1
-        return f"{device_in}"
+        return f"setpoint1:OK:{self._device.setpoint1}"
 
+    @conditional_reply("connected")
     def getSet2(self):
         """
         Get the temperature for setpoint 2 in Kelvin from the device
         """
-        print("getSet2 called")
-        device_in = self._device.setpoint2
-        return f"{device_in}"
+        return f"setpoint2:OK:{self._device.setpoint2}"
 
+    @conditional_reply("connected")
     def getPressure(self):
         """
         Get the current pressure target and current actual pressure in mbar from the device
         """
-        print("getPressure called")
-        pressure_readback_value = self._device.pressure
-        needlevalve_pressure = self._device.needle_valve_pressure
-        return f"pressure:OK:{pressure_readback_value},{needlevalve_pressure}" # comma needed?
-        # return pressure_readback_value, needlevalve_pressure
+        return f"pressure:OK:{self._device.nv_pressure},{self._device.nv_pressure_sp}"
 
+    @conditional_reply("connected")
     def getNeedlePosition(self):
         """
         Get the position of the needle valve from the device in mm
         """
-        print("getNeedlePosition called")
-        device_in = self._device.nv
-        return f"nv:OK:{device_in}"
+        return f"nv:OK:{self._device.nv}"
 
+    @conditional_reply("connected")
     def getAttoAngle(self):
         """
         Get the angle of the attocube in degrees from the device
         """
-        print("getAttoAngle called")
-        device_in = self._device.attoangle
-        return f"attoangle:OK:{device_in}"
+        return f"attoangle:OK:{self._device.attoangle}"
 
+    @conditional_reply("connected")
     def getHeLevel(self):
         """
         Get the current level of helium as a percentage of 243 from the device.
         """
-        ### converted to percentage of 243 
-        # (device divides returned value by 243 then multiplies by 100)
-        print("getHeLevel called")
-        device_in = self._device.helevel
-        # helevel = (device_in/243)*100
-        # return f"helevel:OK:{device_in}"
-        return f"{device_in}"
+        return f"helevel:OK:{self._device.helevel}"
 
+    @conditional_reply("connected")
     def getMacroStatus(self):
         """
         If MACRO:STAT:READ is true, can get macro status. 
         Otherwise, Macro Status should be disabled.
         """
-        print("getMacroStatus called")
-        device_in = self._device.macrostatus
-        # return f"getstatus:OK:{device_in}"
-        return f"{device_in}"
+        device_status_string_list = [
+            f"output {self._device.field_T}T,{self._device.curr_A}A;",
+            f"voltage {self._device.voltage};",
+            f"heater {self._device.heater};",
+            f"ramprate {self._device.ramprate};",
+            f"units {self._device.units};",
+            f"target {self._device.field_T}T,{self._device.curr_A}A;",
+            f"persistent {self._device.field_T if self._device.persistmode else 0.0}T,"
+            f"{self._device.curr_A if self._device.persistmode else 0.0}A;",
+            f"psustatus {self._device.psustatus};",
+            f"pausestatus {self._device.pausestatus};",
+            f"tblstatus {self._device.tblstatus};",
+            f"ready {'ON' if self._device.ready else 'OFF'};",
+            f"sensA {self._device.sensA};",
+            f"sensB {self._device.sensB};",
+            f"setpoint1 {self._device.setpoint1};",
+            f"setpoint2 {self._device.setpoint2};",
+            f"L1pid {self._device.L1pid};",
+            f"L2pid {self._device.L2pid};",
+            f"L1power {self._device.L1power};",
+            f"L1range {self._device.L1range};",
+            f"L2power {self._device.L2power};",
+            f"L2range {self._device.L2range};",
+            f"L1mout {self._device.L1mout};",
+            f"L2mout {self._device.L2mout};",
+            f"L1ctrl {self._device.L1ctrl};",
+            f"L2ctrl {self._device.L2ctrl};",
+            f"zone {self._device.zone};",
+            f"tcstatus {self._device.tcstatus};",
+            f"nv {self._device.nv};",
+            f"pressure {self._device.nv_pressure},{self._device.nv_pressure_sp};",
+            f"valvestatus {self._device.valvestatus};",
+            f"helevel {self._device.helevel};",
+            f"nlevel {self._device.nlevel};",
+            f"hefrequency {self._device.hefrequency};",
+            f"persistmode {'ON' if self._device.persistmode else 'OFF'};",
+            f"attoangle {self._device.attoangle};"
+        ]
+
+        return f"getstatus:OK:{''.join(device_status_string_list)}"
 
     # Set commands
-
+    @conditional_reply("connected")
     def setField(self, command):
         """
         Sets the new target FIELD value to the device. The FIELD type returned is Tesla.
         The protocol function will run abort before sending the new field value.
         """
-        print("Setting Field")
         self._device.field_T = command
         return f"setfield:{command}"
 
+    @conditional_reply("connected")
     def setPersistMode(self, command):
         """
         Sets the persist mode to either 'ON' or 'OFF' on the device
         """
-        print(f"Setting persist mode from {self._device.persistmode} to: {command}")
-        self._device.persistmode = command
-        return f"{command}"
+        assert command in ["ON", "OFF"]
+        self._device.persistmode = command == "ON"
+        return f"setpersist:OK:{command}"
 
+    @conditional_reply("connected")
     def setSet1(self, command):
         """
         Set the temperature for setpoint 1 in Kelvin on the device
         """
-        print(f"Setting setpoint1 from {self._device.setpoint2} to: {command}")
         self._device.setpoint1 = command
         return f"set1:{command}"
 
+    @conditional_reply("connected")
     def setSet2(self, command):
         """
         Set the temperature for setpoint 2 in Kelvin on the device
         """
-        print(f"Setting setpoint2 from {self._device.setpoint2} to: {command}")
         self._device.setpoint2 = command
         return f"set2:{command}"
 
+    @conditional_reply("connected")
     def setPressure(self, command):
         """
         Get the pressure target in mbar on the device
         """
-        print(f"Setting pressure from {self._device.pressure} to: {command}")
-        self._device.pressure = command
+        self._device.nv_pressure = command
+        self._device.nv_pressure_sp = command
         return f"setpressure:{command}"
 
+    @conditional_reply("connected")
     def setNeedlePosition(self, command):
         """
         Set the position of the needle valve on the device in mm
         """
-        print(f"Setting needle position from {self._device.nv} to: {command}")
         self._device.nv = command
         return f"setposition:{command}"
 
+    @conditional_reply("connected")
     def setAttoAngle(self, command):
         """
         Set the angle of the attocube in degrees on the device
         """
-        print(f"Setting atto angle from {self._device.attoangle} to: {command}")
+        assert 0 <= command < 361, f"Invalid attocube angle {command}"
         self._device.attoangle = command
         return f"setangle:{command}"
 
@@ -255,6 +265,3 @@ class B17TmagStreamInterface(StreamInterface):
 
         """
         self.log.error("An error occurred at request " + repr(request) + ": " + repr(error))
-
-    def catch_all(self, command):
-        pass

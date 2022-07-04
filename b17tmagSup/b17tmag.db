@@ -7,46 +7,24 @@ record(bo, "$(P)DISABLE"){
     field(ONAM, "COMMS DISABLED")
 }
 
-
 record(ai, "$(P)FIELD"){
     field(DESC, "The field of the magnet at present")
     field(DTYP, "stream")
     field(PREC, "2")
-    field(INP, "$(P)SEND_FIELD_CURR_VALS") # TEST
-    # field(INP, "@b17tmag.proto getField($(P)) $(PORT)") # Accurate to manual
+    field(INP, "@b17tmag.proto getField($(P)) $(PORT)") # Accurate to manual
     field(SCAN, "1 second")
     field(EGU, "T")
+    info(archive, "VAL")
+    info(interest, "HIGH")
 }
 
 record(ai, "$(P)CURR"){
     field(DESC, "The current of the magnet at present")
-    field(DTYP, "stream")
     field(PREC, "2")
-    field(INP, "$(P)SEND_FIELD_CURR_VALS") # TEST
-    # field(INP, "@b17tmag.proto getField($(P)) $(PORT)") # Accurate to manual
     field(EGU, "A")
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
-
-
-# Waveform to read in FIELD and CURR PV's in and fanout record
-record(waveform, "$(P)FIELD_CURR_ARRAY"){
-    field(DESC, "Array ot store FELD and CURR VALS")
-    field(DTYP, "stream")
-    field(SCAN, "1 second")
-    field(INP,  "@b17tmag.proto getField($(P)) $(PORT)")
-    field(NELM, "2")
-    field(FTVL, "DOUBLE")
-    field(FLNK, "$(P)SEND_FIELD_CURR_VALS")
-}
-
-# Fanout record to pass FIELD and CURR vals over to correct PV's
-record(fanout, "$(P)SEND_FIELD_CURR_VALS"){
-    field(DESC, "Send to respective PVs")
-    field(SCAN, "Passive")
-    field(LNK1, "$(P)FIELD")
-    field(LNK2, "$(P)CURR")
-}
-
 
 record(mbbi, "$(P)HEATER"){
     field(DESC, "The status of the heater")
@@ -61,6 +39,8 @@ record(mbbi, "$(P)HEATER"){
     field(TWST, "OFF AT FIELD")
     field(THVL, "3")
     field(THST, "NO MATCH")
+    info(archive, "VAL")
+    info(interest, "HIGH")
 }
 
 record(ai, "$(P)FIELD:PERSIST"){
@@ -69,39 +49,17 @@ record(ai, "$(P)FIELD:PERSIST"){
     field(SCAN, "1 second")
     field(PREC, "2")
     field(EGU, "T")
-    field(INP, "$(P)SEND_PERSIST_DIFF") # TEST
-    # field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)") # Accurate to manual
+    field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)") # Accurate to manual
+    info(archive, "VAL")
+    info(interest, "HIGH")
 }
 
 record(ai, "$(P)CURR:PERSIST"){
     field(DESC, "Persistent current of magnet at present")
-    field(DTYP, "stream")
-    field(SCAN, "1 second")
     field(PREC, "2")
     field(EGU, "A")
-    field(INP, "$(P)SEND_PERSIST_DIFF") # TEST
-    # field(INP, "@b17tmag.proto getPersist($(P)) $(PORT)") # Accurate to manual
-}
-
-
-# Waveform and fanout records for FIELD and CURR PERSIST PV's
-# The waveform reads in getPersistMode values
-record(waveform, "$(P)PERIST_READBACK_ARRAY"){
-    field(DESC, "Persistent readback array values")
-    field(DTYP, "stream")
-    field(SCAN, "1 second")
-    field(INP,  "@b17tmag.proto getPersist($(P)) $(PORT)")
-    field(NELM, "2")
-    field(FTVL, "DOUBLE")
-    field(FLNK, "$(P)SEND_PERSIST_DIFF")
-}
-
-# fanout record to pass on respective persist values to PV's
-record(fanout, "$(P)SEND_PERSIST_DIFF"){
-    field(DESC, "Send to respective PVs")
-    field(SCAN, "Passive")
-    field(LNK1, "$(P)FIELD:PERSIST")
-    field(LNK2, "$(P)CURR:PERSIST")
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
 
 record(bi, "$(P)MODE:PERSIST"){
@@ -111,6 +69,8 @@ record(bi, "$(P)MODE:PERSIST"){
     field(INP, "@b17tmag.proto getPersistMode $(PORT)")
     field(ZNAM, "ON")
     field(ONAM, "OFF")
+    info(archive, "VAL")
+    info(interest, "HIGH")
 }
 
 record(bo, "$(P)MODE:PERSIST:SP"){
@@ -129,6 +89,8 @@ record(bi, "$(P)READY"){
     field(INP, "@b17tmag.proto getReady $(PORT)")
     field(ZNAM, "ON")
     field(ONAM, "OFF")
+    info(archive, "VAL")
+    info(interest, "HIGH")
 }
 
 #  Need to run abort first (should be achievable in the protocol file)
@@ -147,6 +109,8 @@ record(ai, "$(P)TEMP:A"){
     field(PREC, "2")
     field(EGU, "K")
     field(INP, "@b17tmag.proto getSensA $(PORT)")
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
 
 record(ai, "$(P)TEMP:B"){
@@ -156,28 +120,30 @@ record(ai, "$(P)TEMP:B"){
     field(PREC, "2")
     field(EGU, "K")
     field(INP, "@b17tmag.proto getSensB $(PORT)")
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
 
 record(ai, "$(P)TEMP:SET1"){
     field(DESC, "The temperature for setpoint 1")
-    field(DTYP, "Soft Channel") # Potentially Remove
-    # field(DTYP, "stream") # Maybe revert back too
+    field(DTYP, "stream")
     field(SCAN, "1 second")
     field(PREC, "2")
     field(EGU, "K")
-    # field(INP, "@b17tmag.proto getSet1 $(PORT)") # Accurate to manual
-    field(INP, "$(P)TEMP:SET1:SP") # Potentially Remove
+    field(INP, "@b17tmag.proto getSet1 $(PORT)")
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
 
 record(ai, "$(P)TEMP:SET2"){
     field(DESC, "The temperature for setpoint 2")
-    field(DTYP, "Soft Channel") # Potentially remove
-    # field(DTYP, "stream") # Potentially Revert back too
+    field(DTYP, "stream")
     field(SCAN, "1 second")
     field(PREC, "2")
     field(EGU, "K")
-    # field(INP, "@b17tmag.proto getSet2 $(PORT)") # Accurate to manual
-    field(INP, "$(P)TEMP:SET2:SP") # Potentially Remove
+    field(INP, "@b17tmag.proto getSet2 $(PORT)")
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
 
 record(ao, "$(P)TEMP:SET1:SP"){
@@ -186,7 +152,6 @@ record(ao, "$(P)TEMP:SET1:SP"){
     field(EGU, "K")
     field(OUT, "@b17tmag.proto setSet1 $(PORT)")
     field(VAL, "0")
-    field(FLNK, "$(P)TEMP:SET1") # Potentially Remove
 }
 
 record(ao, "$(P)TEMP:SET2:SP"){
@@ -194,7 +159,6 @@ record(ao, "$(P)TEMP:SET2:SP"){
     field(DTYP, "stream")
     field(EGU, "K")
     field(OUT, "@b17tmag.proto setSet2 $(PORT)")
-    field(FLNK, "$(P)TEMP:SET2") # Potentially Remove
     field(VAL, "0")
 }
 
@@ -209,7 +173,7 @@ record(ao, "$(P)NV:POS:SP"){
     field(DTYP, "stream")
     field(EGU, "mm")
     field(PREC, "2")
-    field(OUT, "@b17tmag.proto setNeedlePosition ($(P)) $(PORT)")
+    field(OUT, "@b17tmag.proto setNeedlePosition $(PORT)")
     field(VAL, "0")
 }
 
@@ -220,16 +184,16 @@ record(ai, "$(P)NV:POS"){
     field(EGU, "mm")
     field(PREC, "2")
     field(INP, "@b17tmag.proto getNeedlePosition $(PORT)")
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
 
 record(ai, "$(P)NV:PRESSURE"){
     field(DESC, "The current pressure")
-    field(DTYP, "stream")
     field(EGU, "mbar")
     field(PREC, "2")
-    # field(INP, "$(P)PRESSURE_DIFF_ARRAY.[0]") # TEST 1
-    field(INP, "$(P)SEND_PRESSURE_DIFF") # TEST 2
-    # field(INP, "@b17tmag.proto getPressure($(P)) $(PORT)") # Accurate to manual
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
 
 # # Not in manual but exists currently to satisfy manual proto file method
@@ -239,30 +203,8 @@ record(ai, "$(P)NV:PRESSURE:SP:RBV"){
     field(SCAN, "1 second")
     field(EGU, "mbar")
     field(PREC, "2")
-    # field(INP, "$(P)PRESSURE_DIFF_ARRAY.[1]") # TEST 1
-    field(INP, "$(P)SEND_PRESSURE_DIFF") # TEST 2
-    # field(INP, "@b17tmag.proto getPressure($(P)) $(PORT)") # Accurate to manual
+    field(INP, "@b17tmag.proto getPressure($(P)) $(PORT)")
 }
-
-#Alternative method of retreiving both NV:PRESSURE:SP:RBV and NV:PRESSURE
-# Retrieve value and place in array. Then fanout INVIDISUAL RECORDS TO REPESCTIVE PV's
-record(waveform, "$(P)PRESSURE_DIFF_ARRAY"){
-    field(DESC, "Store expected and actual pressure")
-    field(DTYP, "stream")
-    field(INP,  "@b17tmag.proto getPressure($(P)) $(PORT)")
-    field(NELM, "2")
-    field(SCAN, "1 second")
-    field(FTVL, "DOUBLE")
-    field(FLNK, "$(P)SEND_PRESSURE_DIFF")
-}
-
-record(fanout, "$(P)SEND_PRESSURE_DIFF"){
-    field(DESC, "Send respective pressure values to PV's")
-    field(SCAN, "Passive")
-    field(LNK1, "$(P)NV:PRESSURE:SP:RBV")
-    field(LNK2, "$(P)NV:PRESSURE")
-}
-
 
 record(ao, "$(P)NV:PRESSURE:SP"){
     field(DESC, "The pressue target")
@@ -271,7 +213,6 @@ record(ao, "$(P)NV:PRESSURE:SP"){
     field(PREC, "2")
     field(VAL, "0")
     field(OUT, "@b17tmag.proto setPressure($(P)) $(PORT)")
-    field(FLNK, "$(P)NV:PRESSURE:SP:RBV") # Potentially Remove
 }
 
 record(ai, "$(P)ATTO:POS"){
@@ -281,6 +222,8 @@ record(ai, "$(P)ATTO:POS"){
     field(EGU, "deg")
     field(PREC, "2")
     field(INP, "@b17tmag.proto getAttoAngle $(PORT)")
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
 
 # # Needs to be converted to a percentge of 243 
@@ -294,25 +237,24 @@ record(ai, "$(P)HE:LEVEL_RAW"){
     field(PREC, "2")
     field(EGU, "%")
     field(INP, "@b17tmag.proto getHeLevel $(PORT)")
-    field(FLNK, "$(P)HE:LEVEL:CALC PP")
 }
 
-# # HE LEVEL Calc Value as Pecentage of 245
+# # HE LEVEL Calc Value as Pecentage of 243
 record(calcout, "$(P)HE:LEVEL:CALC"){
     field(DESC, "Percentage value of HE:LEVEL")
-    field(INPA, "$(P)HE:LEVEL_RAW")
-    field(CALC, "(A / 245) * 100")
-    field(OUT, "$(P)HE:LEVEL PP")
+    field(INPA, "$(P)HE:LEVEL_RAW CP MSS")
+    field(CALC, "(A / 243) * 100")
 }
 
-# # HE LEVEL as percetnage of 245
+# # HE LEVEL as percetnage of 243
 record(ai, "$(P)HE:LEVEL"){
     field(DESC, "The current level of helium")
-    field(DTYP, "Soft Channel") # Different to manual as PV displays alarm using stream
-    field(INP, "$(P)HE:LEVEL:CALC")
+    field(INP, "$(P)HE:LEVEL:CALC CP MSS")
     field(PREC, "2")
     field(EGU, "%")
     field(VAL, "0") # default value so pv does not display as disabled in OPI
+    info(archive, "VAL")
+    info(interest, "MEDIUM")
 }
 
 record(ao, "$(P)ATTO:POS:SP"){

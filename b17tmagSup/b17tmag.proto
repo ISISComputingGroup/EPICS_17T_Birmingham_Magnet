@@ -4,19 +4,15 @@ OutTerminator = "\n";
 ReplyTimeout = 2000;
 
 getField {
-    ExtraInput = Ignore;
     out "output";
-    # in "%(\$1:FIELD)fT,%f(\$1:CURR)A";
-    # in "output:OK:%(\$1FIELD.VAL)fT,%f(\$1CURR.VAL)A";
-    # in "output:OK:%(\$1FIELD)fT,%(\$1CURR)fA";
-    in "%(\$1FIELD)fT,%(\$1CURR)fA";
+    in "output:OK:%fT,%(\$1CURR:RAW.A)fA";
 }
 
 setField {
     out "abort"; # ADD BACK IN 
     wait 1000;
-    out "setfield:%d";
-    in "setfield:%d";
+    out "setfield %f";
+    in "setfield:%*s";
 }
 
 getHeater {
@@ -24,24 +20,19 @@ getHeater {
     in "heater:OK:%d";
 }
 
-# # NEED TO FIX
 getPersist {
     out "persistent";
-    # in "OK:%(\$1FIELD:PERSIST)fT,%f(\$1CURR:PERSIST)A";
-    # in "persistent:OK:%(\$1FIELD:PERSIST)fT,%(\$1CURR:PERSIST)fA";
-    in "%(\$1FIELD:PERSIST)fT,%(\$1CURR:PERSIST)fA";
+    in "persistent:OK:%fT,%(\$1CURR:PERSIST:RAW.A)fA";
 }
 
 getPersistMode {
     out "persistmode";
-    # in "persistmode:OK:%s";
-    in "%s";
+    in "persistmode:OK:%{ON|OFF}";
 }
 
 setPersistMode {
-    ExtraInput = Ignore;
-    out "setpersistmode%{ON|OFF}";
-    in "%{ON|OFF}";
+    out "setpersist %{ON|OFF}";
+    in "setpersist:%*s";
 }
 
 getReady {
@@ -70,17 +61,14 @@ getSet2 {
 }
 
 setSet1 {
-    out "set1%f";
-    # in "set1:%s"; # OLD
-     in "set1:%f"; # NEW
+    out "set1 %f";
+    in "set1:%*s";
 }
 
 setSet2 {
-    out "set2%f";
-    # in "set2:%s"; # OLD
-    in "set2:%f"; # NEW
+    out "set2 %f";
+    in "set2:%*s";
 }
-
 
 getNeedlePosition {
     out "nv";
@@ -89,21 +77,17 @@ getNeedlePosition {
 
 getPressure {
     out "pressure";
-    in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f,%(\$1NV:PRESSURE)f"; # OLD
-    # in "pressure:OK:%f,%f";
-    # in "pressure:OK:%(\$1NV:PRESSURE:SP:RBV)f";
-    # in "%(\$1NV:PRESSURE)f";
+    in "pressure:OK:%(\$1NV:PRESSURE:RAW.A)f,%f"; # TODO: check order of arguments
 }
 
 setPressure {
     out "setpressure %f";
-    # in "setpressure:%s"; # origional
-    in "setpressure:%f"; # NEW
+    in "setpressure:%*s";
 }
+
 setNeedlePosition {
     out "setposition %f";
-    in "setposition:%f";
-    # in "setposition:%s"; # OLD
+    in "setposition:%*s";
 }
 
 getAttoAngle {
@@ -113,18 +97,17 @@ getAttoAngle {
 
 getHeLevel {
     out "helevel";
-    in "%f";
+    in "helevel:OK:%f";
 }
 
 setAttoAngle {
     out "setangle%f";
-    in "setangle:%f"; #used to be %s
+    in "setangle:%*s";
 }
 
 getMacroStatus {
     out "getstatus";
     seperator=";";
-    # in "getstatus:OK:%s"; # OLD
-    in "%s";
+    in "getstatus:OK:%s";
 }
 
