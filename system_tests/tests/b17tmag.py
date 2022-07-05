@@ -124,8 +124,9 @@ class B17TmagTests(unittest.TestCase):
 
     @skip_if_recsim("Requires emulator backdoor")
     def test_WHEN_macro_set_THEN_macro_readback_correctly(self):
-        self.lewis.backdoor_set_on_device("helevel", 50)
+        self.lewis.backdoor_set_and_assert_set("helevel", 50.0)
         self.ca.assert_that_pv_is("MACRO:STAT", "output1.0T,10.0A;voltage1.253;heater0;ramprate1.234;units0;target1.0T,10.0A;persistent0.0T,0.0A;psustatusUnabletocommunicatewithPSU.Pleasecheckinterfaceandmainscables.Initialisationfailed.;pausestatusOFF;tblstatus1.000000fT,10.000000A;readyON;sensA0.0;sensB0.0;setpoint10.0;setpoint20.0;L1pid50.0,20.0,0.0;L2pid45.0,23.0,0.0;L1power0.0;L1range1;L2power0.0;L2range2;L1mout23.0;L2mout33.0;L1ctrl1,1;L2ctrl2,1;zoneON;tcstatusSensorA:Temperaturestable...SensorB:Temperaturestable...;nv0.608696;pressure17.623276,13.79636;valvestatusIdle;helevel453.0;nlevel121.0;hefrequency1;persistmodeOFF;attoangle117.9992;")
+        self.ca.assert_that_pv_value_is_unchanged("MACRO:STAT", wait=30)
 
     @contextlib.contextmanager
     def _disconnect_device(self):
