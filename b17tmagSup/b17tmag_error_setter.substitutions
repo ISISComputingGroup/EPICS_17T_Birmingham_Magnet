@@ -1,0 +1,8 @@
+file $(UTILITIES)/db/error_setter.template {
+    pattern {P, STREAM_PV, PV_NAME}
+
+    {"\$(P)", "FIELD", "CURR"}
+    {"\$(P)", "FIELD:PERSIST", "CURR:PERSIST"}
+    {"\$(P)", "NV:PRESSURE:SP:RBV", "NV:PRESSURE"}
+
+}

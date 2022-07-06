@@ -1,18 +1,113 @@
-getIDN {
-    out "*IDN?";
-    in "%\$1[^\r\n]";
-    ExtraInput = Ignore;
+InTerminator = "\n";
+OutTerminator = "\n";
+
+ReplyTimeout = 2000;
+
+getField {
+    out "output";
+    in "output:OK:%fT,%(\$1CURR:RAW.A)fA";
 }
 
-cmd {
-    out "\$1";
+setField {
+    out "abort"; # ADD BACK IN 
+    wait 1000;
+    out "setfield %f";
+    in "setfield:%*s";
 }
 
-setD {
-    out "\$1 %d";
+getHeater {
+    out "heater";
+    in "heater:OK:%d";
 }
-getD {
-    out "\$1?";
-    in "%d";
-    ExtraInput = Ignore;
+
+getPersist {
+    out "persistent";
+    in "persistent:OK:%fT,%(\$1CURR:PERSIST:RAW.A)fA";
 }
+
+getPersistMode {
+    out "persistmode";
+    in "persistmode:OK:%{ON|OFF}";
+}
+
+setPersistMode {
+    out "setpersist %{ON|OFF}";
+    in "setpersist:%*s";
+}
+
+getReady {
+    out "ready";
+    in "ready:OK:%s";
+}
+
+getSensA {
+    out "sensA";
+    in "sensA:OK:%f";
+}
+
+getSensB {
+    out "sensB";
+    in "sensB:OK:%f";
+}
+
+getSet1 {
+    out "setpoint1";
+    in "setpoint1:OK:%f";
+}
+
+getSet2 {
+    out "setpoint2";
+    in "setpoint2:OK:%f";
+}
+
+setSet1 {
+    out "set1 %f";
+    in "set1:%*s";
+}
+
+setSet2 {
+    out "set2 %f";
+    in "set2:%*s";
+}
+
+getNeedlePosition {
+    out "nv";
+    in "nv:OK:%f";
+}
+
+getPressure {
+    out "pressure";
+    in "pressure:OK:%(\$1NV:PRESSURE:RAW.A)f,%f"; # TODO: check order of arguments
+}
+
+setPressure {
+    out "setpressure %f";
+    in "setpressure:%*s";
+}
+
+setNeedlePosition {
+    out "setposition %f";
+    in "setposition:%*s";
+}
+
+getAttoAngle {
+    out "attoangle";
+    in "attoangle:OK:%f"
+}
+
+getHeLevel {
+    out "helevel";
+    in "helevel:OK:%f";
+}
+
+setAttoAngle {
+    out "setangle%f";
+    in "setangle:%*s";
+}
+
+getMacroStatus {
+    out "getstatus";
+    seperator=";";
+    in "getstatus:OK:%s";
+}
+
