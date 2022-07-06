@@ -93,7 +93,7 @@ record(bi, "$(P)READY"){
     info(interest, "HIGH")
 }
 
-#  Need to run abort first (should be achievable in the protocol file)
+# Need to run abort first (should be achievable in the protocol file)
 record(ao, "$(P)FIELD:SP"){
     field(DESC, "The field to set")
     field(DTYP, "stream")
@@ -162,7 +162,7 @@ record(ao, "$(P)TEMP:SET2:SP"){
     field(VAL, "0")
 }
 
-# # Alias's
+# Alias's
 alias("$(P)TEMP:SET1", "$(P)TEMP:HEATEX")
 alias("$(P)TEMP:SET1:SP", "$(P)TEMP:HEATEX:SP")
 alias("$(P)TEMP:SET2", "$(P)TEMP:PROBE")
@@ -196,7 +196,7 @@ record(ai, "$(P)NV:PRESSURE"){
     info(interest, "MEDIUM")
 }
 
-# # Not in manual but exists currently to satisfy manual proto file method
+# Not in manual but exists currently to satisfy manual proto file method
 record(ai, "$(P)NV:PRESSURE:SP:RBV"){
     field(DESC, "The current pressue target")
     field(DTYP, "stream")
@@ -226,10 +226,10 @@ record(ai, "$(P)ATTO:POS"){
     info(interest, "MEDIUM")
 }
 
-# # Needs to be converted to a percentge of 243 
-# # (divide the returned value by 243 then multiply by 100) 
-# # - maybe possible at the proto file level
-# # HE LEVEL Raw Input Value
+# Needs to be converted to a percentge of 243 
+# (divide the returned value by 243 then multiply by 100) 
+# - maybe possible at the proto file level
+# HE LEVEL Raw Input Value
 record(ai, "$(P)HE:LEVEL_RAW"){
     field(DESC, "The current level of helium")
     field(DTYP, "stream")
@@ -239,14 +239,14 @@ record(ai, "$(P)HE:LEVEL_RAW"){
     field(INP, "@b17tmag.proto getHeLevel $(PORT)")
 }
 
-# # HE LEVEL Calc Value as Pecentage of 243
+# HE LEVEL Calc Value as Pecentage of 243
 record(calcout, "$(P)HE:LEVEL:CALC"){
     field(DESC, "Percentage value of HE:LEVEL")
     field(INPA, "$(P)HE:LEVEL_RAW CP MSS")
     field(CALC, "(A / 243) * 100")
 }
 
-# # HE LEVEL as percetnage of 243
+# HE LEVEL as percetnage of 243
 record(ai, "$(P)HE:LEVEL"){
     field(DESC, "The current level of helium")
     field(INP, "$(P)HE:LEVEL:CALC CP MSS")
