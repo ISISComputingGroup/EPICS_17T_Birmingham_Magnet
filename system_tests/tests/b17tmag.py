@@ -132,8 +132,7 @@ class B17TmagTests(unittest.TestCase):
     @skip_if_recsim("Requires emulator backdoor")
     def test_WHEN_device_disconnected_THEN_all_pvs_in_alarm(self, _, pv):
         self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
-
         with self.lewis.backdoor_simulate_disconnected_device():
             self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.INVALID, timeout=30)
-
+        # Assert alarms clear on reconnection
         self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE, timeout=30)
