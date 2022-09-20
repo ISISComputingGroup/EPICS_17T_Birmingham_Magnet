@@ -128,20 +128,11 @@ class B17TmagTests(unittest.TestCase):
         self.lewis.backdoor_set_and_assert_set("helevel", 50.0)
         self.ca.assert_that_pv_is("MACRO:STAT", "output1.0T,10.0A;voltage1.253;heater0;ramprate1.234;units0;target1.0T,10.0A;persistent0.0T,0.0A;psustatusUnabletocommunicatewithPSU.Pleasecheckinterfaceandmainscables.Initialisationfailed.;pausestatusOFF;tblstatus1.000000fT,10.000000A;readyON;sensA0.0;sensB0.0;setpoint10.0;setpoint20.0;L1pid50.0,20.0,0.0;L2pid45.0,23.0,0.0;L1power0.0;L1range1;L2power0.0;L2range2;L1mout23.0;L2mout33.0;L1ctrl1,1;L2ctrl2,1;zoneON;tcstatusSensorA:Temperaturestable...SensorB:Temperaturestable...;nv0.608696;pressure17.623276,13.79636;valvestatusIdle;helevel453.0;nlevel121.0;hefrequency1;persistmodeOFF;attoangle117.9992;")
 
-    @contextlib.contextmanager
-    def _disconnect_device(self):
-        self.lewis.backdoor_set_on_device("connected", False)
-        try:
-            yield
-        finally:
-            self.lewis.backdoor_set_on_device("connected", True)
-
     @parameterized.expand(parameterized_list(READ_PVS))
     @skip_if_recsim("Requires emulator backdoor")
     def test_WHEN_device_disconnected_THEN_all_pvs_in_alarm(self, _, pv):
         self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE)
-
-        with self._disconnect_device():
+        with self.lewis.backdoor_simulate_disconnected_device():
             self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.INVALID, timeout=30)
-
+        # Assert alarms clear on reconnection
         self.ca.assert_that_pv_alarm_is(pv, self.ca.Alarms.NONE, timeout=30)
