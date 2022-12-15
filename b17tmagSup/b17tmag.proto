@@ -1,7 +1,9 @@
 InTerminator = "\n";
 OutTerminator = "\n";
 
+LockTimeout = 3000;
 ReplyTimeout = 2000;
+ReadTimeout = 1000;
 
 getField {
     out "output";

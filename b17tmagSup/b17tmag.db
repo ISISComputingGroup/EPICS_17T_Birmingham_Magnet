@@ -87,8 +87,8 @@ record(bi, "$(P)READY"){
     field(DTYP, "stream")
     field(SCAN, "1 second")
     field(INP, "@b17tmag.proto getReady $(PORT)")
-    field(ZNAM, "ON")
-    field(ONAM, "OFF")
+    field(ZNAM, "OFF")
+    field(ONAM, "ON")
     info(archive, "VAL")
     info(interest, "HIGH")
 }
