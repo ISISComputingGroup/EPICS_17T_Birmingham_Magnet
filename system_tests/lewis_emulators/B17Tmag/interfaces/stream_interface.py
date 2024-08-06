@@ -22,7 +22,6 @@ class B17TmagStreamInterface(StreamInterface):
         CmdBuilder("getAttoAngle").escape("attoangle").eos().build(),
         CmdBuilder("getHeLevel").escape("helevel").eos().build(),
         CmdBuilder("getMacroStatus").escape("getstatus").eos().build(),
-
         # Set commands
         CmdBuilder("abort").escape("abort").eos().build(),
         CmdBuilder("setField").escape("setfield ").float().eos().build(),
@@ -33,7 +32,7 @@ class B17TmagStreamInterface(StreamInterface):
         CmdBuilder("setNeedlePosition").escape("setposition ").float().eos().build(),
         CmdBuilder("setAttoAngle").escape("setangle").float().eos().build(),
     }
-    
+
     in_terminator = "\n"
     out_terminator = "\n"
 
@@ -48,8 +47,8 @@ class B17TmagStreamInterface(StreamInterface):
     @conditional_reply("connected")
     def getHeater(self):
         """
-        Gets the heater value from the device. 
-        The heater value will be one of 4 possible values: 
+        Gets the heater value from the device.
+        The heater value will be one of 4 possible values:
         - 0:ON
         - 1:OFF
         - 2:OFF AT FIELD
@@ -60,7 +59,7 @@ class B17TmagStreamInterface(StreamInterface):
     @conditional_reply("connected")
     def getPersist(self):
         """
-        Gets the current field and current of the magnet at present from the device. 
+        Gets the current field and current of the magnet at present from the device.
         The field is returned in Telsa and the current is returned in Amps.
         """
         if self._device.persistmode:
@@ -150,7 +149,7 @@ class B17TmagStreamInterface(StreamInterface):
     @conditional_reply("connected")
     def getMacroStatus(self):
         """
-        If MACRO:STAT:READ is true, can get macro status. 
+        If MACRO:STAT:READ is true, can get macro status.
         Otherwise, Macro Status should be disabled.
         """
         device_status_string_list = [
@@ -189,7 +188,7 @@ class B17TmagStreamInterface(StreamInterface):
             f"nlevel {self._device.nlevel};",
             f"hefrequency {self._device.hefrequency};",
             f"persistmode {'ON' if self._device.persistmode else 'OFF'};",
-            f"attoangle {self._device.attoangle};"
+            f"attoangle {self._device.attoangle};",
         ]
 
         return f"getstatus:OK:{''.join(device_status_string_list)}"
