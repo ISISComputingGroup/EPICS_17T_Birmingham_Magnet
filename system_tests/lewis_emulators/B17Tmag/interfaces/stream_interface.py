@@ -1,6 +1,6 @@
-from lewis.adapters.stream import StreamInterface, Cmd
-from lewis.utils.command_builder import CmdBuilder
+from lewis.adapters.stream import StreamInterface
 from lewis.core.logging import has_log
+from lewis.utils.command_builder import CmdBuilder
 from lewis.utils.replies import conditional_reply
 
 
@@ -96,7 +96,7 @@ class B17TmagStreamInterface(StreamInterface):
         """
         abort
         """
-        return f"abort:OK:"
+        return "abort:OK:"
 
     @conditional_reply("connected")
     def getSensB(self):

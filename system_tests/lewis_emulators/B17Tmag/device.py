@@ -1,9 +1,9 @@
-import threading
-from lewis.devices import StateMachineDevice
-from lewis.core import approaches
-from lewis.core.logging import has_log
-from .states import DefaultState
 from collections import OrderedDict
+
+from lewis.core.logging import has_log
+from lewis.devices import StateMachineDevice
+
+from .states import DefaultState
 
 
 @has_log
