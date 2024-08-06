@@ -1,14 +1,13 @@
-import threading
-from lewis.devices import StateMachineDevice
-from lewis.core import approaches
-from lewis.core.logging import has_log
-from .states import DefaultState
 from collections import OrderedDict
+
+from lewis.core.logging import has_log
+from lewis.devices import StateMachineDevice
+
+from .states import DefaultState
 
 
 @has_log
 class SimulatedB17Tmag(StateMachineDevice):
-
     def _initialize_data(self):
         """
         Initialize all of the device's attributes.
@@ -17,10 +16,10 @@ class SimulatedB17Tmag(StateMachineDevice):
         self.re_initialise()
 
     def _get_state_handlers(self):
-        return {'default': DefaultState()}
+        return {"default": DefaultState()}
 
     def _get_initial_state(self):
-        return 'default'
+        return "default"
 
     def _get_transition_handlers(self):
         return OrderedDict([])
@@ -40,9 +39,11 @@ class SimulatedB17Tmag(StateMachineDevice):
         self.ramprate = 1.234000  # Current ramp rate
         self.units = 0  # Current ramp rate units
         self.psustatus = "Unable to communicate with PSU. Please check interface and mains cables. Initialisation failed."
-        self.pausestatus = "OFF"  #Power supply pause status
+        self.pausestatus = "OFF"  # Power supply pause status
         self.tblstatus = "1.000000fT,10.000000A"  # Ignore table status. If ON, ramp rates set by the user with the ‘ramp rate’ command are limited by the table stored in the configuration file; if OFF, ramp rates follow the table and the ‘set rate’ command is ignored.
-        self.ready = True  # Indicates if the power supply software is busy completing its current task
+        self.ready = (
+            True  # Indicates if the power supply software is busy completing its current task
+        )
         self.sensA = 0.000  # Current Temp Heat Exchanger
         self.sensB = 0.000  # Current Temp Probe
         self.setpoint1 = 0.000  # Current Setpoint Heat Exchanger
@@ -58,13 +59,17 @@ class SimulatedB17Tmag(StateMachineDevice):
         self.L1ctrl = "1,1"  # Control loop 1 parameters
         self.L2ctrl = "2,1"  # Control loop 2 parameters
         self.zone = "ON"  # If ON, PID and control loop parameters are automatically changed with the setpoint following tables stored in the configuration file. If OFF allows the user to set arbitrary power output
-        self.tcstatus = "Sensor A: Temperature stable... Sensor B: Temperature stable..." # VTI control status
+        self.tcstatus = (
+            "Sensor A: Temperature stable... Sensor B: Temperature stable..."  # VTI control status
+        )
         self.nv = 0.608696  # Needle Valve position mm
         self.nv_pressure = 17.623276  # Needle Valve Pressure (Actual Pressure)
         self.nv_pressure_sp = 13.796360  # Needle Valve Pressure Target (Setpoint)
-        self.valvestatus  = "Idle"  # Needle valve status
+        self.valvestatus = "Idle"  # Needle valve status
         self.helevel = 453.00  # current helium level in mm
         self.nlevel = 121.00  # current nitrogen level in mm
         self.hefrequency = 1  # He level gauge reading frequency 1
-        self.persistmode = False  # Check the persistence mode, if ON, heater is switched off at field
+        self.persistmode = (
+            False  # Check the persistence mode, if ON, heater is switched off at field
+        )
         self.attoangle = 117.999200  # attocube positioner angle (degrees)
